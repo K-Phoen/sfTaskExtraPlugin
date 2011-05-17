@@ -34,3 +34,11 @@ Test
 ----
 
   * `test:plugin`: Launches a plugin test suite
+
+
+Changes from the original plugin
+--------------------------------
+
+ * unit and functional tests bootstraps try to guess the symfony location (if
+   not given through `$_SERVER['SYMFONY']`). If the symfony dir is still not
+   found, an exception is raised.
