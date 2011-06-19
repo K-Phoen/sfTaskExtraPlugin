@@ -2,3 +2,8 @@ autoload:
   sfTaskExtraPlugin_lib:
     path:    "<?php echo dirname(__FILE__) ?>/../lib"
     exclude: [task]
+
+  taskextra_addon:
+    name:           taskextra_addon
+    path:           %SF_PLUGINS_DIR%/sfTaskExtraPlugin/lib/task/addon/
+    recursive:      false
