@@ -4,7 +4,7 @@ require_once dirname(__FILE__).'/sfTaskExtraGeneratorBaseTask.class.php';
 
 /**
  * Wraps the generate module task to create a plugin module
- * 
+ *
  * @package     sfTaskExtraPlugin
  * @subpackage  task
  * @author      Kris Wallsmith <kris.wallsmith@symfony-project.com>
@@ -90,6 +90,9 @@ EOF;
 
     // rename base actions class
     $this->getFilesystem()->rename($moduleDir.'/lib/BaseActions.class.php', $moduleDir.'/lib/Base'.$module.'Actions.class.php');
+
+    // rename base components class
+    $this->getFilesystem()->rename($moduleDir.'/lib/BaseComponents.class.php', $moduleDir.'/lib/Base'.$module.'Components.class.php');
 
     // customize php and yml files
     $finder = sfFinder::type('file')->name('*.php', '*.yml');
