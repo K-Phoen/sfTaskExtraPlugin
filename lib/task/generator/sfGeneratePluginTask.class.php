@@ -4,7 +4,7 @@ require_once dirname(__FILE__).'/sfTaskExtraGeneratorBaseTask.class.php';
 
 /**
  * Generates a new plugin.
- * 
+ *
  * @package     sfTaskExtraPlugin
  * @subpackage  task
  * @author      Kris Wallsmith <kris.wallsmith@symfony-project.com>
@@ -112,6 +112,8 @@ EOF;
     $this->getFilesystem()->rename($pluginDir.'/lib/routing/PluginRouting.class.php', $pluginDir.'/lib/routing/'.$plugin.'Routing.class.php');
     // PluginUser
     $this->getFilesystem()->rename($pluginDir.'/lib/user/PluginUser.class.php', $pluginDir.'/lib/user/'.$plugin.'User.class.php');
+    // PluginTestFunctional
+    $this->getFilesystem()->rename($pluginDir.'/lib/test/PluginTestFunctional.class.php', $pluginDir.'/lib/test/'.$plugin.'TestFunctional.class.php');
 
     // tokens
     $finder = sfFinder::type('file')->name('*.php', '*.yml', 'package.xml.tmpl');
@@ -130,8 +132,16 @@ EOF;
       $this->getFilesystem()->mirror(sfConfig::get('sf_symfony_lib_dir').'/task/generator/skeleton/app/app', $testApp, $finder);
 
       // ProjectConfiguration
-      $this->getFilesystem()->copy($skeletonDir.'/project/ProjectConfiguration.class.php', $testProject.'/config/ProjectConfiguration.class.php', array('override' => true));
-      $this->getFileSystem()->replaceTokens($testProject.'/config/ProjectConfiguration.class.php', '##', '##', $constants);
+      $finder = sfFinder::type('any');
+      $this->getFilesystem()->mirror(
+        $skeletonDir.'/project/config', $testProject.'/config',
+        $finder, array('override' => true)
+      );
+      // tokens
+      $this->getFilesystem()->replaceTokens(
+        sfFinder::type('any')->in($pluginDir.'/config'),
+        '##', '##', $constants
+      );
 
       // ApplicationConfiguration
       $this->getFilesystem()->rename($testApp.'/config/ApplicationConfiguration.class.php', $testApp.'/config/'.$options['test-application'].'Configuration.class.php');
