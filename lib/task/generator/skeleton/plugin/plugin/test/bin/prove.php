@@ -8,15 +8,32 @@
  */
 
 // first parse options
-$options = array_merge(array(
-                // default symfony path
-                'symfony' => '/usr/share/php/symfony/',
-                'xml'     => false
-              ), getopt("", array("symfony:", "xml:")));
+$options = array_merge(
+  array(
+    // default symfony path
+    'symfony' => '/usr/share/php/symfony/:../../../../lib/vendor/symfony/lib',
+    'xml'     => false
+  ),
+  getopt('', array('symfony:', 'xml:'))
+);
 
 // create the common include for lib path
 $sf_lib_path_include = dirname(dirname(__FILE__)).'/bootstrap/sf_test_lib.inc';
-file_put_contents($sf_lib_path_include, sprintf('<?php if (!isset($_SERVER[\'SYMFONY\'])) {$_SERVER[\'SYMFONY\'] = "%s";}', $options['symfony']));
+
+file_put_contents($sf_lib_path_include, sprintf("<?php
+
+if (!isset(\$_SERVER['SYMFONY']))
+{
+  foreach (explode(':', '%s') as \$path)
+  {
+    if (is_dir(\$path))
+    {
+      \$_SERVER['SYMFONY'] = \$path;
+      break;
+    }
+  }
+}", $options['symfony']
+));
 
 include dirname(__FILE__).'/../bootstrap/unit.php';
 

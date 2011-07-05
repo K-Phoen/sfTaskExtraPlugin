@@ -139,7 +139,7 @@ EOF;
       );
       // tokens
       $this->getFilesystem()->replaceTokens(
-        sfFinder::type('any')->in($pluginDir.'/config'),
+        sfFinder::type('any')->in($testProject.'/config'),
         '##', '##', $constants
       );
 
