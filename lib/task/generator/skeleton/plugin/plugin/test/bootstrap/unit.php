@@ -8,6 +8,11 @@ if (file_exists(dirname(__FILE__).'/sf_test_lib.inc'))
 
 if (!isset($_SERVER['SYMFONY']))
 {
+  $_SERVER['SYMFONY'] = dirname(__FILE__).'/../../../../lib/vendor/symfony/lib';
+}
+
+if (!is_dir($_SERVER['SYMFONY']))
+{
   throw new RuntimeException('Could not find symfony core libraries.');
 }
 

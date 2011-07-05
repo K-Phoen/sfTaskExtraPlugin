@@ -11,6 +11,16 @@ if (!isset($app))
   $app = '##APP_NAME##';
 }
 
+if (!isset($_SERVER['SYMFONY']))
+{
+  $_SERVER['SYMFONY'] = dirname(__FILE__).'/../../../../lib/vendor/symfony/lib';
+}
+
+if (!is_dir($_SERVER['SYMFONY']))
+{
+  throw new RuntimeException('Could not find symfony core libraries.');
+}
+
 require_once $_SERVER['SYMFONY'].'/autoload/sfCoreAutoload.class.php';
 sfCoreAutoload::register();
 
