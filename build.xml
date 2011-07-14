@@ -1,85 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="${projectName}" default="main">
-  <!-- Properties -->
-  <property name="dir.reports" value="${project.basedir}/build/logs" />
-  <property name="dir.doc"     value="${project.basedir}/doc" />
-  <!-- Clean target -->
-  <target name="clean">
-    <delete dir="${dir.reports}" />
-    <mkdir dir="${dir.reports}" />
-    <delete dir="${dir.doc}" />
-    <mkdir dir="${dir.doc}" />
-    <mkdir dir="${project.basedir}/logs/docblox/" />
-  </target>
-  <!-- Default target -->
-  <target name="main" depends="clean,test,pdepend,phpmd,phpcpd,phpcs,phploc,phpdoc">
-    <echo msg="All analysis done." />
-  </target>
-  <!-- PHP API Documentation -->
-  <target name="phpdoc" depends="clean">
-    <echo msg="PHP Documentor..." />
-    <exec command="docblox" dir="${project.basedir}" />
-  </target>
-  <!-- symfony test -->
-  <target name="test" depends="clean">
-    <echo msg="Running tests (sf1.3)" />
-    <exec command="php ${project.basedir}/test/bin/prove.php --symfony ../../../lib/sf13/lib --xml ${dir.reports}/build-13.xml" dir="${project.basedir}" />
-    <echo msg="Running tests (sf1.4)" />
-    <exec command="php ${project.basedir}/test/bin/prove.php --symfony ../../../lib/sf14/lib --xml ${dir.reports}/build-14.xml" dir="${project.basedir}" />
-  </target>
 
-  <!-- PHPLoc -->
-  <target name="phploc">
-    <taskdef name="phploc" classname="phing.tasks.ext.PHPLocTask" />
-    <phploc reportType="csv" reportName="phploc" reportDirectory="${dir.reports}" countTests="true">
-      <fileset dir="${project.basedir}">
-        <include name="**/*.php" />
-      </fileset>
-    </phploc>
-  </target>
-  <!-- PHP Mess Detector -->
-  <target name="phpmd">
-    <echo msg="PHP Mess Detector..." />
-    <phpmd rulesets="codesize,unusedcode">
-      <fileset dir="${project.basedir}">
-        <include name="**/*.php" />
-      </fileset>
-      <formatter type="xml" outfile="${dir.reports}/pmd.xml" />
-    </phpmd>
-  </target>
-  <!-- PHP copy/paste analysis -->
-  <target name="phpcpd">
-    <echo msg="PHP Copy/Paste..." />
-    <phpcpd>
-      <fileset dir="${project.basedir}">
-        <include name="**/*.php" />
-      </fileset>
-      <formatter type="pmd" outfile="${dir.reports}/pmd-cpd.xml" />
-    </phpcpd>
-  </target>
-  <!-- PHP dependency checker -->
-  <target name="pdepend">
-    <echo msg="PHP Depend..." />
-    <phpdepend>
-      <fileset dir="${project.basedir}">
-        <include name="**/*.php" />
-      </fileset>
-      <logger type="jdepend-xml" outfile="${dir.reports}/jdepend.xml" />
-      <logger type="jdepend-chart" outfile="${dir.reports}/dependencies.svg" />
-      <logger type="overview-pyramid" outfile="${dir.reports}/overview-pyramid.svg" />
-    </phpdepend>
-  </target>
-  <!-- PHP CodeSniffer -->
-  <target name="phpcs">
-    <echo msg="PHP CodeSniffer..." />
-    <phpcodesniffer standard="Symfony" showSniffs="true" showWarnings="true">
-      <fileset dir="${project.basedir}">
-        <include name="**/*.php" />
-        <exclude name="**/om/" />
-        <exclude name="**/base/" />
-        <exclude name="**/map/" />
-      </fileset>
-      <formatter type="checkstyle" outfile="${dir.reports}/checkstyle.xml" />
-    </phpcodesniffer>
-  </target>
+<project name="sfTaskExtra" default="build" basedir=".">
+ <property name="source" value="."/>
+
+ <target name="clean" description="Clean up and create artifact directories">
+  <delete dir="${basedir}/build/docs"/>
+  <delete dir="${basedir}/build/logs"/>
+  <delete dir="${basedir}/build/pdepend"/>
+
+  <mkdir dir="${basedir}/build/docs"/>
+  <mkdir dir="${basedir}/build/logs"/>
+  <mkdir dir="${basedir}/build/pdepend"/>
+ </target>
+
+ <target name="phpunit"
+         description="Run unit tests using PHPUnit and generates junit.xml and clover.xml">
+  <exec executable="phpunit" failonerror="true"/>
+ </target>
+
+ <target name="parallelTasks"
+         description="Run the pdepend, phpmd, phpcpd, phpcs, phpdoc and phploc tasks in parallel using a maximum of 2 threads.">
+  <parallel threadCount="2">
+   <sequential>
+    <antcall target="pdepend"/>
+    <antcall target="phpmd"/>
+   </sequential>
+   <antcall target="phpcpd"/>
+   <antcall target="phpcs"/>
+<!--
+   <antcall target="phpdoc"/>
+-->
+   <antcall target="phploc"/>
+  </parallel>
+ </target>
+
+ <target name="pdepend" description="Generate jdepend.xml and software metrics charts using PHP_Depend">
+  <exec executable="pdepend">
+   <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
+   <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
+   <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
+   <arg value="--ignore=${basedir}/lib/vendor,${basedir}/plugins/**/lib/vendor" />
+   <arg path="${source}" />
+  </exec>
+ </target>
+
+ <target name="phpmd" description="Generate pmd.xml using PHPMD">
+  <exec executable="phpmd">
+   <arg path="${source}" />
+   <arg value="xml" />
+   <arg value="codesize,unusedcode,naming" />
+   <arg value="--reportfile" />
+   <arg value="./build/logs/pmd.xml" />
+   <arg value="--exclude=Base*,*Peer,${source}/lib/model/map,${source}/test/fixture/project/plugins" />
+  </exec>
+ </target>
+
+ <target name="phpcpd" description="Generate pmd-cpd.xml using PHPCPD">
+  <exec executable="phpcpd">
+    <arg line="--log-pmd ${source}/build/logs/pmd-cpd.xml ${source}/config ${source}/lib/filter ${source}/lib/form ${source}/lib/model ${source}/lib/test ${source}/routing ${source}/modules ${source}/test" />
+  </exec>
+ </target>
+
+ <target name="phploc" description="Generate phploc.csv">
+  <exec executable="phploc">
+   <arg value="--log-csv" />
+   <arg value="${basedir}/build/logs/phploc.csv" />
+   <arg path="${source}" />
+  </exec>
+ </target>
+
+ <target name="phpcs" description="Generate checkstyle.xml using PHP_CodeSniffer">
+  <exec executable="phpcs">
+    <arg line="--report=checkstyle --report-file=${basedir}/build/logs/checkstyle.xml --standard=Symfony --ignore=Base*,*Peer,${source}/lib/model/map,${source}/test/fixture/project/plugins ${source}/config ${source}/lib/filter ${source}/lib/form ${source}/lib/model ${source}/lib/test ${source}/lib/routing ${source}/modules ${source}/test" />
+  </exec>
+ </target>
+
+ <target name="phpdoc" description="Generate API documentation using PHPDocumentor">
+  <exec executable="phpdoc">
+   <arg value="--directory" />
+   <arg path="${source}" />
+   <arg value="--target" />
+   <arg path="${basedir}/build/api" />
+  </exec>
+ </target>
+
+ <target name="build" depends="clean,parallelTasks"/>
 </project>
