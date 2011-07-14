@@ -1,10 +1,7 @@
 <?php
 
 // try to include the command line argument symfony
-if (file_exists(dirname(__FILE__).'/sf_test_lib.inc'))
-{
-  include(dirname(__FILE__).'/sf_test_lib.inc');
-}
+include_once dirname(__FILE__).'/options.php';
 
 if (!isset($app))
 {
