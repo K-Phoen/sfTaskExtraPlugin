@@ -1,17 +1,14 @@
 <?php
 
 // try to include the command line argument symfony
-if (file_exists(dirname(__FILE__).'/sf_test_lib.inc'))
+include_once dirname(__FILE__).'/options.php';
+
+if (!isset($_SERVER['SYMFONY']))
 {
-  include(dirname(__FILE__).'/sf_test_lib.inc');
+  $_SERVER['SYMFONY'] = dirname(__FILE__).'/../../../../lib/vendor/symfony/lib';
 }
 
-if (!isset($_SERVER['SYMFONY']) && is_dir(dirname(__FILE__).'/../../../../lib/vendor/symfony/lib/'))
-{
-  $_SERVER['SYMFONY'] = realpath(dirname(__FILE__).'/../../../../lib/vendor/symfony/lib/');
-}
-
-if (!isset($_SERVER['SYMFONY']) || (isset($_SERVER['SYMFONY']) && !is_dir($_SERVER['SYMFONY'])))
+if (!is_dir($_SERVER['SYMFONY']))
 {
   throw new RuntimeException('Could not find symfony core libraries.');
 }
