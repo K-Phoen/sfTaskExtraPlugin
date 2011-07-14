@@ -39,7 +39,6 @@
    <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
    <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
    <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
-   <arg value="--ignore=${basedir}/lib/vendor,${basedir}/plugins/**/lib/vendor" />
    <arg path="${source}" />
   </exec>
  </target>
@@ -57,7 +56,7 @@
 
  <target name="phpcpd" description="Generate pmd-cpd.xml using PHPCPD">
   <exec executable="phpcpd">
-    <arg line="--log-pmd ${source}/build/logs/pmd-cpd.xml ${source}/config ${source}/lib/filter ${source}/lib/form ${source}/lib/model ${source}/lib/test ${source}/routing ${source}/modules ${source}/test" />
+    <arg line="--log-pmd ${source}/build/logs/pmd-cpd.xml ${source}/config ${source}/lib ${source}/test" />
   </exec>
  </target>
 
@@ -71,7 +70,7 @@
 
  <target name="phpcs" description="Generate checkstyle.xml using PHP_CodeSniffer">
   <exec executable="phpcs">
-    <arg line="--report=checkstyle --report-file=${basedir}/build/logs/checkstyle.xml --standard=Symfony --ignore=Base*,*Peer,${source}/lib/model/map,${source}/test/fixture/project/plugins ${source}/config ${source}/lib/filter ${source}/lib/form ${source}/lib/model ${source}/lib/test ${source}/lib/routing ${source}/modules ${source}/test" />
+    <arg line="--report=checkstyle --report-file=${basedir}/build/logs/checkstyle.xml --standard=Symfony --ignore=${source}/test/fixture/project/plugins ${source}/config ${source}/lib ${source}/test" />
   </exec>
  </target>
 
