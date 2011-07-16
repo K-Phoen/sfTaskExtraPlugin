@@ -50,7 +50,7 @@ class ProjectConfiguration extends sfProjectConfiguration
           $this->pluginPaths[''][] = $pluginPaths[$plugin];
         }
         // plugin not found, try our dependancies directory
-        else if(($path = $this->getDependancy($plugin)))
+        else if (($path = $this->getDependancy($plugin)))
         {
           $plugin_dir = sprintf('%s/plugins/%s', sfConfig::get('sf_root_dir'), $plugin);
 
