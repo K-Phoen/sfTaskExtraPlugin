@@ -22,9 +22,8 @@ class ProjectConfiguration extends sfProjectConfiguration
 
     $this->setPluginPath('##PLUGIN_NAME##', dirname(__FILE__).'/../../../..');
 
-    $pluginsDir = sprintf('%s/plugins', sfConfig::get('sf_root_dir'));
-
     // make sure that the plugins directory exists
+    $pluginsDir = sprintf('%s/plugins', sfConfig::get('sf_root_dir'));
     if (!is_dir($pluginsDir))
     {
       $fs = new sfFileSystem();
@@ -33,7 +32,12 @@ class ProjectConfiguration extends sfProjectConfiguration
 
     // make sure that all the generated things will go into the plugin's
     // dir
-    $this->forceSymlink(dirname(__FILE__).'/../../../..', sprintf('%s/plugins/kNewsPlugin', sfConfig::get('sf_root_dir')));
+    $this->forceSymlink(
+      dirname(__FILE__).'/../../../..',
+      sprintf('%s/plugins/##PLUGIN_NAME##', sfConfig::get('sf_root_dir'))
+    );
+
+    $this->used_dependancies[] = sprintf('%s/plugins/##PLUGIN_NAME##', sfConfig::get('sf_root_dir'));
   }
 
   public function getPluginPaths()
@@ -53,6 +57,7 @@ class ProjectConfiguration extends sfProjectConfiguration
         else if (($path = $this->getDependancy($plugin)))
         {
           $plugin_dir = sprintf('%s/plugins/%s', sfConfig::get('sf_root_dir'), $plugin);
+          $this->used_dependancies[] = $plugin_dir;
 
           $this->forceSymlink($path, $plugin_dir);
           $this->pluginPaths[''][] = $plugin_dir;
@@ -89,11 +94,6 @@ class ProjectConfiguration extends sfProjectConfiguration
     {
       $this->dependancies_dir = $_SERVER['##PLUGIN_NAME##_DEPENDANCIES'];
     }
-
-    // in order to have the propel build system work for external
-    // dependancies
-    //sfToolkit::addIncludePath($this->dependancies_dir);
-    //sfToolkit::addIncludePath(dirname(__FILE__).'/..');
   }
 
   protected function getDependancy($plugin)
@@ -106,5 +106,16 @@ class ProjectConfiguration extends sfProjectConfiguration
     $path = sprintf('%s/plugins/%s', $this->dependancies_dir, $plugin);
 
     return is_dir($path) ? $path : false;
+  }
+
+  public function __destruct()
+  {
+    foreach ($this->used_dependancies as $dep)
+    {
+      if (is_link($dep))
+      {
+        unlink($dep);
+      }
+    }
   }
 }
