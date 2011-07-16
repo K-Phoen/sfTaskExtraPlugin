@@ -2,7 +2,7 @@
 
 include dirname(__FILE__).'/../../bootstrap/unit.php';
 
-$t = new sfTaskExtraLimeTest(37);
+$t = new sfTaskExtraLimeTest(43);
 $t->configuration = $configuration;
 
 class sfTaskExtraGeneratorTasksCleanup
@@ -52,17 +52,24 @@ $t->task_ok('sfGeneratePluginTask', array('sfTestPlugin'), array(), false, '"sfG
 mkdir(sfConfig::get('sf_plugins_dir').'/anotherPlugin');
 $t->task_ok('sfGeneratePluginTask', array('anotherPlugin'), array(), true, '"sfGeneratePluginTask" runs on an empty plugin directory');
 
-$plugin_dir   = sfConfig::get('sf_plugins_dir').'/sfTestPlugin';
-$config_file  = $plugin_dir.'/config/sfTestPluginConfiguration.class.php';
-$test_project = $plugin_dir.'/test/fixtures/project';
-$test_app     = $test_project.'/apps/frontend';
+$plugin_dir     = sfConfig::get('sf_plugins_dir').'/sfTestPlugin';
+$plugin_lib_dir = sfConfig::get('sf_plugins_dir').'/sfTestPlugin/lib';
+$config_file    = $plugin_dir.'/config/sfTestPluginConfiguration.class.php';
+$test_project   = $plugin_dir.'/test/fixtures/project';
+$test_app       = $test_project.'/apps/frontend';
 
 $t->ok(is_dir($plugin_dir), '"sfGeneratePluginTask" creates the plugin directory');
 $t->ok(file_exists($config_file), '"sfGeneratePluginTask" creates a plugin configuration file');
 $t->like(@file_get_contents($config_file), '/class sfTestPluginConfiguration extends sfPluginConfiguration/', '"sfGeneratePluginTask" creates the plugin configuration class');
+$t->ok(file_exists($plugin_lib_dir.'/routing/sfTestPluginRouting.class.php'), '"sfGeneratePluginTask" creates a customized Routing class');
+$t->ok(file_exists($plugin_lib_dir.'/user/sfTestPluginUser.class.php'), '"sfGeneratePluginTask" creates a customized User class');
+$t->ok(file_exists($plugin_lib_dir.'/test/sfTestPluginTestFunctional.class.php'), '"sfGeneratePluginTask" creates a customized Functional tests class');
 $t->like(@file_get_contents($plugin_dir.'/test/bootstrap/unit.php'), '/new sfTestPluginConfiguration/', '"sfGeneratePluginTask" includes the plugin config in the unit test bootstrapper');
 $t->ok(file_exists($test_project.'/config/ProjectConfiguration.class.php'), '"sfGeneratePluginTask" creates a test project');
 $t->like(@file_get_contents($test_project.'/config/ProjectConfiguration.class.php'), '/sfTestPlugin/', '"sfGeneratePluginTask" includes a customized ProjectConfiguration');
+$t->ok(file_exists($test_project.'/config/databases.yml'), '"sfGeneratePluginTask" includes a databases.yml file');
+$t->ok(file_exists($test_project.'/config/propel.ini'), '"sfGeneratePluginTask" includes a propel.ini file');
+$t->like(@file_get_contents($test_project.'/config/propel.ini'), '/propel.project             = sfTestPlugin/', '"sfGeneratePluginTask" fills the propel.project property with the plugin\'s name');
 $t->ok(file_exists($test_app.'/config/frontendConfiguration.class.php'), '"sfGeneratePluginTask" creates a test app');
 
 $t->task_ok('sfGeneratePluginTask', array('sfTestPlugin'), array(), false, '"sfGeneratePluginTask" fails if plugin already exists');
