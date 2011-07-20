@@ -37,11 +37,38 @@ class sfI18nPluginExtractAll extends sfI18nApplicationExtract
     // Extract from PHP files to find __() calls in actions/ lib/ and templates/ directories
     $this->extractModules();
 
+    // Extract form forms (error messages, labels, help texts, etc...)
+    $this->extractForms();
+
     // Extract from generator.yml files
     $this->extractGeneratorYml();
 
     // Extract from validate/*.yml files
     $this->extractValidateYml();
+  }
+
+  protected function extractForms()
+  {
+    $forms = sfFinder::type('file')
+      ->relative()
+      ->name('*.class.php')
+      ->discard(array('BaseFormPropel.class.php', 'Base*'))
+      ->in(sprintf('%s/lib/form', $this->pluginPath));
+
+    foreach ($forms as $form)
+    {
+      $cleaned_name = str_replace('.class.php', '', basename($form));
+
+      $extractor = new sfI18nFormExtract(
+        clone $this->i18n,
+        $this->culture,
+        array('form' => $cleaned_name)
+      );
+      $extractor->extract();
+
+      // will be used later for stats
+      $this->extractObjects[] = $extractor;
+    }
   }
 
   protected function extractModules()

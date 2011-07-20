@@ -37,10 +37,6 @@ class sfI18nPluginModuleExtract extends sfI18nModuleExtract
     $this->plugin = $this->parameters['plugin'];
     $this->pluginPath = sprintf('%s/%s', sfConfig::get('sf_plugins_dir'), $this->plugin);
     $this->module = $this->parameters['module'];
-
-    $options = $this->i18n->getOptions();
-    $dirs = $this->i18n->isMessageSourceFileBased($options['source']) ? array(sprintf('%s/i18n', $this->pluginPath)) : null;
-    $this->i18n->setMessageSource($dirs, $this->culture);
   }
 
   /**
