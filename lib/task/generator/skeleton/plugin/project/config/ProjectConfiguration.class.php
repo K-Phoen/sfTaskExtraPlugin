@@ -10,8 +10,6 @@ sfCoreAutoload::register();
 
 class ProjectConfiguration extends sfProjectConfiguration
 {
-  protected $dependancies_dir;
-
   public function setup()
   {
     $this->setPlugins(array(
@@ -21,7 +19,27 @@ class ProjectConfiguration extends sfProjectConfiguration
     ));
 
     $this->setPluginPath('##PLUGIN_NAME##', dirname(__FILE__).'/../../../..');
+  }
 
+
+  /********************************************************************\
+  *                                                                    *
+  *      You should not have to change anything in the code below      *
+  *                                                                    *
+  \********************************************************************/
+
+  protected $dependancies_dir;
+
+
+  public function loadPlugins()
+  {
+    $this->fixSetup();
+
+    parent::loadPlugins();
+  }
+
+  protected function fixSetup()
+  {
     // make sure that the plugins directory exists
     $pluginsDir = sprintf('%s/plugins', sfConfig::get('sf_root_dir'));
     if (!is_dir($pluginsDir))
