@@ -8,7 +8,7 @@ if (!isset($_SERVER['SYMFONY']))
 require_once $_SERVER['SYMFONY'].'/autoload/sfCoreAutoload.class.php';
 sfCoreAutoload::register();
 
-class sfTaskExtraTestProjectConfiguration extends sfProjectConfiguration
+class ProjectConfiguration extends sfProjectConfiguration
 {
   public function setup()
   {

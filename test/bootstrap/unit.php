@@ -18,7 +18,7 @@ sfCoreAutoload::register();
 
 // configuration
 require_once dirname(__FILE__).'/../fixtures/project/config/ProjectConfiguration.class.php';
-$configuration = new sfTaskExtraTestProjectConfiguration(dirname(__FILE__).'/../fixtures/project');
+$configuration = new ProjectConfiguration(dirname(__FILE__).'/../fixtures/project');
 require_once $configuration->getSymfonyLibDir().'/vendor/lime/lime.php';
 
 require_once dirname(__FILE__).'/../../config/sfTaskExtraPluginConfiguration.class.php';

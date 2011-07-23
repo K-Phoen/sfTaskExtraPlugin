@@ -103,10 +103,10 @@ $t->task_ok('sfGeneratePluginTask', array('sfTestYetAgainPlugin'), array('--skip
 $t->ok(!is_dir(sfConfig::get('sf_plugins_dir').'/sfTestYetAgainPlugin/test'), '"sfGeneratePluginTask" does not generate a test directory when "--skip-test-dir" is used');
 
 $t->diag('sfGenerateTestTask');
-$t->task_ok('sfGenerateTestTask', array('Form'), array(), false, '"sfGenerateTestTask" fails if test script exists');
-$t->task_ok('sfGenerateTestTask', array('Form'), array('--force'), true, '"sfGenerateTestTask" succeeds with existing file and --force option');
-$t->ok(file_exists(sfConfig::get('sf_test_dir').'/unit/form/FormTest.php'), '"sfGenerateTestTask" generates a test file');
-$t->like(@file_get_contents(sfConfig::get('sf_test_dir').'/unit/form/FormTest.php'), '~'.preg_quote('dirname(__FILE__).\'/../../bootstrap/unit.php\'').'~', '"sfGenerateTestTask" includes a relative path to bootstrap');
+$t->task_ok('sfGenerateTestTask', array('FooI18nForm'), array(), false, '"sfGenerateTestTask" fails if test script exists');
+$t->task_ok('sfGenerateTestTask', array('FooI18nForm'), array('--force'), true, '"sfGenerateTestTask" succeeds with existing file and --force option');
+$t->ok(file_exists(sfConfig::get('sf_test_dir').'/unit/form/FooI18nFormTest.php'), '"sfGenerateTestTask" generates a test file');
+$t->like(@file_get_contents(sfConfig::get('sf_test_dir').'/unit/form/FooI18nFormTest.php'), '~'.preg_quote('dirname(__FILE__).\'/../../bootstrap/unit.php\'').'~', '"sfGenerateTestTask" includes a relative path to bootstrap');
 $t->task_ok('sfGenerateTestTask', array('StringToolkit'));
 $t->ok(file_exists(sfConfig::get('sf_plugins_dir').'/StandardPlugin/test/unit/util/string/StringToolkitTest.php'), '"sfGenerateTestTask" generates a plugin test');
 $t->like(@file_get_contents(sfConfig::get('sf_plugins_dir').'/StandardPlugin/test/unit/util/string/StringToolkitTest.php'), '~'.preg_quote('dirname(__FILE__).\'/../../../../../../test/bootstrap/unit.php\'').'~', '"sfGenerateTestTask" includes a relative path to the plugin bootstrap');
