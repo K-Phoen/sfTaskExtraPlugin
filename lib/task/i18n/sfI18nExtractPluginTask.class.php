@@ -17,6 +17,7 @@ class sfI18nExtractPluginTask extends sfBaseTask
       new sfCommandOption('display-old', null, sfCommandOption::PARAMETER_NONE, 'Output all old strings'),
       new sfCommandOption('auto-save', null, sfCommandOption::PARAMETER_NONE, 'Save the new strings'),
       new sfCommandOption('auto-delete', null, sfCommandOption::PARAMETER_NONE, 'Delete old strings'),
+      new sfCommandOption('application', null, sfCommandOption::PARAMETER_OPTIONAL, 'The application name', null),
     ));
 
     $this->namespace = 'i18n';
@@ -24,8 +25,8 @@ class sfI18nExtractPluginTask extends sfBaseTask
     $this->briefDescription = 'Extracts i18n strings from php files';
 
     $this->detailedDescription = <<<EOF
-The [i18n:extract|INFO] task extracts i18n strings from your project files
-for the given plugin and target culture:
+The [i18n:extract|INFO] task extracts i18n strings for the given plugin and
+target culture:
 
   [./symfony i18n:extract-plugin myPlugin fr|INFO]
 
@@ -51,6 +52,12 @@ be careful, especially if you have translations for plugins as they will
 appear as old strings but they are not:
 
   [./symfony i18n:extract-plugin --auto-delete myPlugin fr|INFO]
+
+By default, the task loads and save i18n strings in the plugin's directory. If
+you want to export them in an application, use the [--application|COMMENT]
+option:
+
+  [./symfony i18n:extract-plugin --application=frontend myPlugin fr|INFO]
 EOF;
   }
 
@@ -61,8 +68,11 @@ EOF;
   {
     $this->logSection('i18n', sprintf('extracting i18n strings for the "%s" plugin', $arguments['plugin']));
 
-    // create a dummy configuration
-    $this->configuration = $this->createConfiguration($this->getFirstApplication(), null);
+    // when not in an "application context", let's create a dummy config
+    if (!isset($options['application']))
+    {
+      $this->configuration = $this->createConfiguration($this->getFirstApplication(), null);
+    }
 
     // get i18n configuration from factories.yml
     $config = sfFactoryConfigHandler::getConfiguration($this->configuration->getConfigPaths('config/factories.yml'));

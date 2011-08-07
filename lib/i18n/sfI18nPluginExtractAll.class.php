@@ -18,9 +18,17 @@ class sfI18nPluginExtractAll extends sfI18nApplicationExtract
     $this->plugin = $this->parameters['plugin'];
     $this->pluginPath = sprintf('%s/%s', sfConfig::get('sf_plugins_dir'), $this->plugin);
 
+    $this->i18n->setMessageSource($this->getMessageSource(), $this->culture);
+  }
+
+  protected function getMessageSource()
+  {
     $options = $this->i18n->getOptions();
-    $dirs = $this->i18n->isMessageSourceFileBased($options['source']) ? array(sprintf('%s/i18n', $this->pluginPath)) : null;
-    $this->i18n->setMessageSource($dirs, $this->culture);
+    $source = isset($this->parameters['application'])
+      ? sfConfig::get('sf_app_i18n_dir')
+      : sprintf('%s/i18n', $this->pluginPath);
+
+    return $this->i18n->isMessageSourceFileBased($options['source']) ? array($source) : null;
   }
 
   /**
