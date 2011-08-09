@@ -68,7 +68,7 @@ class sfI18nPluginExtractAll extends sfI18nApplicationExtract
       $cleaned_name = str_replace('.class.php', '', basename($form));
 
       $extractor = new sfI18nFormExtract(
-        clone $this->i18n,
+        $this->i18n,
         $this->culture,
         array('form' => $cleaned_name)
       );
@@ -89,7 +89,7 @@ class sfI18nPluginExtractAll extends sfI18nApplicationExtract
     foreach ($modules as $module)
     {
       $extractor = new sfI18nPluginModuleExtract(
-        clone $this->i18n,
+        $this->i18n,
         $this->culture,
         array(
           'plugin' => $this->plugin,

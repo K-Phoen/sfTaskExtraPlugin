@@ -16,27 +16,24 @@
  */
 class sfI18nPluginModuleExtract extends sfI18nModuleExtract
 {
-  protected $plugin;
-  protected $pluginPath;
+  protected $moduleDir;
 
   /**
    * Configures the current extract object.
    */
   public function configure()
   {
-    if (!isset($this->parameters['plugin']))
+    foreach (array('plugin', 'module') as $param)
     {
-      throw new sfException('You must give a "plugin" parameter when extracting for a plugin.');
+      if (empty($this->parameters[$param]))
+      {
+        throw new sfException(sprintf('You must give a "%s" parameter when extracting for a plugin.', $param));
+      }
     }
 
-    if (!isset($this->parameters['module']))
-    {
-      throw new sfException('You must give a "module" parameter when extracting for a module.');
-    }
-
-    $this->plugin = $this->parameters['plugin'];
-    $this->pluginPath = sprintf('%s/%s', sfConfig::get('sf_plugins_dir'), $this->plugin);
-    $this->module = $this->parameters['module'];
+    $this->moduleDir = sprintf('%s/%s/modules/%s',
+      sfConfig::get('sf_plugins_dir'), $this->parameters['plugin'], $this->parameters['module']
+    );
   }
 
   /**
@@ -45,23 +42,18 @@ class sfI18nPluginModuleExtract extends sfI18nModuleExtract
    * * in actions/
    * * in lib/
    * * in templates/
-   *
-   *
-   * This class must be implemented by subclasses.
    */
   public function extract()
   {
     // Extract from PHP files to find __() calls in actions/ lib/ and templates/ directories
-    $moduleDir = sprintf('%s/modules/%s', $this->pluginPath, $this->module);
-
     $this->extractFromPhpFiles(array(
-      $moduleDir.'/actions',
-      $moduleDir.'/lib',
-      $moduleDir.'/templates',
+      $this->moduleDir.'/actions',
+      $this->moduleDir.'/lib',
+      $this->moduleDir.'/templates',
     ));
 
     // Extract from generator.yml files
-    $generator = $moduleDir.'/config/generator.yml';
+    $generator = $this->moduleDir.'/config/generator.yml';
     if (file_exists($generator))
     {
       $yamlExtractor = new sfI18nYamlGeneratorExtractor();
@@ -69,7 +61,7 @@ class sfI18nPluginModuleExtract extends sfI18nModuleExtract
     }
 
     // Extract from validate/*.yml files
-    $validateFiles = glob($moduleDir.'/validate/*.yml');
+    $validateFiles = glob($this->moduleDir.'/validate/*.yml');
     if (is_array($validateFiles))
     {
       foreach ($validateFiles as $validateFile)

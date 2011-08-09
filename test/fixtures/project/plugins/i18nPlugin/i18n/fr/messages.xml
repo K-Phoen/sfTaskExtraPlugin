@@ -5,8 +5,8 @@
     <header/>
     <body>
       <trans-unit id="1">
-        <source>Title</source>
-        <target>Titre</target>
+        <source>Required.</source>
+        <target>Requis.</target>
       </trans-unit>
     </body>
   </file>

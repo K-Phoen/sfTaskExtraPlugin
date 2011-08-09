@@ -12,7 +12,7 @@ class ProjectConfiguration extends sfProjectConfiguration
 {
   public function setup()
   {
-    $this->setPlugins(array('sfTaskExtraPlugin', 'StandardPlugin', 'SpecialPlugin'));
+    $this->setPlugins(array('sfTaskExtraPlugin', 'StandardPlugin', 'SpecialPlugin', 'i18nPlugin'));
     $this->setPluginPath('sfTaskExtraPlugin', dirname(__FILE__).'/../../../..');
     $this->setPluginPath('SpecialPlugin', sfConfig::get('sf_data_dir').'/plugins/SpecialPlugin');
   }

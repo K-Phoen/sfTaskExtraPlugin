@@ -15,7 +15,7 @@ unset($params['cache']);
 
 $i18n = new $class($app_conf, new sfNoCache(), $params);
 
-$extractor = new sfI18nFormExtract($i18n, $culture, array('form' => 'FooI18nForm'));
+$extractor = new sfI18nPluginExtractAll($i18n, $culture, array('plugin' => 'i18nPlugin'));
 $extractor->extract();
 
 
@@ -24,6 +24,7 @@ $extractor->extract();
 $t->messages_ok(
   $extractor->getAllSeenMessages(),
   array(
+    // from forms: FooI18nForm
     'Required.',    // validator
     'Invalid.',
     'Title',        // widget label
@@ -34,14 +35,20 @@ $t->messages_ok(
     'Content',
     ' csrf token',
     'Oh! this validator is a very dumb one', // post validator
+
+    // from templates: indexSuccess.php
+    'Hello world !',
+    'The answer is 42',
+
+    // from actions: @TODO
+    // from lib: @TODO
   ),
   '->getAllSeenMessages() returns %msg_total% messages.'
 );
 $t->messages_ok(
   $extractor->getCurrentMessages(),
   array(
-    'Title',
-    'Required.',
+    'Required.', // from the plugin i18n dir
   ),
   '->getCurrentMessages() returns %msg_total% messages.'
 );
