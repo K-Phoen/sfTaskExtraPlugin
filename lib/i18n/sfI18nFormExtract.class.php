@@ -81,6 +81,7 @@ class sfI18nFormExtract extends sfI18nExtract
     }
 
     $class = new ReflectionClass($class_name);
+    // @TODO: what if the form needs parameters?
     $this->form = $class->isAbstract() ? null : new $class_name();
   }
 

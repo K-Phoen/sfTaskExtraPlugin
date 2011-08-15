@@ -60,7 +60,7 @@ class sfI18nPluginExtractAll extends sfI18nApplicationExtract
     $forms = sfFinder::type('file')
       ->relative()
       ->name('*.class.php')
-      ->discard(array('BaseFormPropel.class.php', 'Base*'))
+      ->discard(array('sfFormLanguage.class.php', 'sfFormPropelCollection.class.php', 'BaseFormPropel.class.php', 'Base*'))
       ->in(sprintf('%s/lib/form', $this->pluginPath));
 
     foreach ($forms as $form)
