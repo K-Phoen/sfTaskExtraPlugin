@@ -3,7 +3,7 @@
 include dirname(__FILE__).'/../../bootstrap/unit.php';
 
 $t = new sfTaskExtraLimeTest(43);
-$t->configuration = $configuration;
+$t->setProjectConfiguration($configuration);
 
 class sfTaskExtraGeneratorTasksCleanup
 {

@@ -3,17 +3,11 @@
 include dirname(__FILE__).'/../../bootstrap/unit.php';
 
 $t = new sfTaskExtraLimeTest(3);
+$t->setProjectConfiguration($configuration);
 
 // lets create the extractor object
 $culture = 'fr';
-$app_conf = $configuration->getApplicationConfiguration('frontend', 'test', true, dirname(__FILE__).'/../../fixtures/project');
-$config = sfFactoryConfigHandler::getConfiguration($app_conf->getConfigPaths('config/factories.yml'));
-
-$class = $config['i18n']['class'];
-$params = $config['i18n']['param'];
-unset($params['cache']);
-
-$i18n = new $class($app_conf, new sfNoCache(), $params);
+$i18n = $t->getI18n($culture, 'frontend');
 
 $extractor = new sfI18nPluginExtractAll($i18n, $culture, array('plugin' => 'i18nPlugin'));
 $extractor->extract();
@@ -40,8 +34,12 @@ $t->messages_ok(
     'Hello world !',
     'The answer is 42',
 
-    // from actions: @TODO
-    // from lib: @TODO
+    // from actions
+    'Set in "index" action...but in the actions.class.php file',
+
+    // from lib
+    'Set in "index" action',
+    'Set in "fooComponent" component',
   ),
   '->getAllSeenMessages() returns %msg_total% messages.'
 );
@@ -49,11 +47,17 @@ $t->messages_ok(
   $extractor->getCurrentMessages(),
   array(
     'Required.', // from the plugin i18n dir
+    'Set in "fooComponent" component',
+
+    // from the i18n dir (deleted messages)
+    'This message does not exist anymore',
   ),
   '->getCurrentMessages() returns %msg_total% messages.'
 );
 $t->messages_ok(
   $extractor->getOldMessages(),
-  array(),
-  '->getOldMessages() returns nothing.'
+  array(
+    'This message does not exist anymore',
+  ),
+  '->getOldMessages() returns %msg_total% messages.'
 );

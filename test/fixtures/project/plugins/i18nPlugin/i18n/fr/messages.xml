@@ -8,6 +8,14 @@
         <source>Required.</source>
         <target>Requis.</target>
       </trans-unit>
+      <trans-unit id="2">
+        <source>Set in "fooComponent" component</source>
+        <target>Défini dans le composant "fooComponent"</target>
+      </trans-unit>
+      <trans-unit id="3">
+        <source>This message does not exist anymore</source>
+        <target>Ce message n'existe plus</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

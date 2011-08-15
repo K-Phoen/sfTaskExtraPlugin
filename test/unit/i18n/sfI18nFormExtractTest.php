@@ -3,17 +3,11 @@
 include dirname(__FILE__).'/../../bootstrap/unit.php';
 
 $t = new sfTaskExtraLimeTest(3);
+$t->setProjectConfiguration($configuration);
 
 // lets create the extractor object
 $culture = 'fr';
-$app_conf = $configuration->getApplicationConfiguration('frontend', 'test', true, dirname(__FILE__).'/../../fixtures/project');
-$config = sfFactoryConfigHandler::getConfiguration($app_conf->getConfigPaths('config/factories.yml'));
-
-$class = $config['i18n']['class'];
-$params = $config['i18n']['param'];
-unset($params['cache']);
-
-$i18n = new $class($app_conf, new sfNoCache(), $params);
+$i18n = $t->getI18n($culture, 'frontend');
 
 $extractor = new sfI18nFormExtract($i18n, $culture, array('form' => 'FooI18nForm'));
 $extractor->extract();
@@ -42,11 +36,18 @@ $t->messages_ok(
   array(
     'Title',
     'Required.',
+    'Set in "fooComponent" component',
+
+    // from the i18n dir (deleted messages)
+    'This message does not exist anymore',
   ),
   '->getCurrentMessages() returns %msg_total% messages.'
 );
 $t->messages_ok(
   $extractor->getOldMessages(),
-  array(),
+  array(
+    'Set in "fooComponent" component',
+    'This message does not exist anymore',
+  ),
   '->getOldMessages() returns nothing.'
 );

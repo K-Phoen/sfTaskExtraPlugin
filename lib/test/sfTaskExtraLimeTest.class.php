@@ -10,7 +10,51 @@
  */
 class sfTaskExtraLimeTest extends lime_test
 {
-  public $configuration;
+  protected $configuration;
+
+  /**
+   * Define the project configuration to use for the next tests.
+   *
+   * @param   ProjectConfiguration  $conf The configuration object.
+   *
+   * @author Kévin Gomez <contact@kevingomez.fr>
+   */
+  public function setProjectConfiguration(ProjectConfiguration $conf)
+  {
+    $this->configuration = $conf;
+  }
+
+  /**
+   * Get the project configuration used for the tests
+   *
+   * @return ProjectConfiguration The configuration object.
+   */
+  public function getProjectConfiguration()
+  {
+    return $this->configuration;
+  }
+
+  /**
+   * Factory method which creates a i18n class instance for the given language
+   * and application.
+   *
+   * @param   string  $language The destination language (default to 'fr').
+   * @param   string  $app      The application to use (default to 'frontend').
+   *
+   * @return object
+   * @author Kévin Gomez <contact@kevingomez.fr>
+   */
+  public function getI18N($language='fr', $app='frontend')
+  {
+    $app_conf = $this->configuration->getApplicationConfiguration($app, 'test', true, dirname(__FILE__).'/../../test/fixtures/project');
+    $config = sfFactoryConfigHandler::getConfiguration($app_conf->getConfigPaths('config/factories.yml'));
+
+    $class = $config['i18n']['class'];
+    $params = $config['i18n']['param'];
+    unset($params['cache']);
+
+    return new $class($app_conf, new sfNoCache(), $params);
+  }
 
   /**
    * Executes a task and tests its success.
@@ -59,7 +103,7 @@ class sfTaskExtraLimeTest extends lime_test
    *                                  Only its values will be tested.
    * @param array $expected_messages  Array of expected i18n strings.
    */
-  public function messages_ok($got_messages, $expected_messages, $message = '')
+  public function messages_ok($got_messages, $expected_messages, $message='')
   {
     $got_messages = array_values($got_messages);
 
