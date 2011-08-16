@@ -10,5 +10,6 @@
   </head>
   <body>
     <?php echo $sf_content ?>
+    <?php echo __('in the global layout') ?>
   </body>
 </html>

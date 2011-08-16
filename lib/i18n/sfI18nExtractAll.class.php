@@ -2,9 +2,6 @@
 
 class sfI18nExtractAll extends sfI18nApplicationExtract
 {
-  protected $extractObjects = array();
-
-
   /**
    * Configures the current extract object.
    */
@@ -16,38 +13,14 @@ class sfI18nExtractAll extends sfI18nApplicationExtract
       $this->parameters['plugins'] = array();
     }
 
-    // Application modules
-    $moduleNames = sfFinder::type('dir')
-      ->maxdepth(0)
-      ->relative()
-      ->in(sfConfig::get('sf_app_module_dir'));
-    foreach ($moduleNames as $moduleName)
-    {
-      $this->extractObjects[] = new sfI18nModuleExtract(
-        $this->i18n,
-        $this->culture,
-        array('module' => $moduleName)
-      );
-    }
+    // will create extractor objects for modules
+    parent::configure();
 
     // Plugins
     $this->extractPlugins();
-  }
 
-  public function extract()
-  {
-    // Application global templates
-    $this->extractFromPhpFiles(sfConfig::get('sf_app_template_dir'));
-
-    // Application global librairies
-    $this->extractFromPhpFiles(sfConfig::get('sf_app_lib_dir'));
-
-
-    // parse all the extractors
-    foreach ($this->extractObjects as $extractObject)
-    {
-      $extractObject->extract();
-    }
+    // forms
+    $this->extractForms();
   }
 
   protected function extractPlugins()
@@ -57,7 +30,7 @@ class sfI18nExtractAll extends sfI18nApplicationExtract
       $this->extractObjects[] = new sfI18nPluginExtractAll(
         $this->i18n,
         $this->culture,
-        array('plugin' => $plugin)
+        array('plugin' => $plugin, 'application' => sfConfig::get('sf_app'))
       );
     }
   }

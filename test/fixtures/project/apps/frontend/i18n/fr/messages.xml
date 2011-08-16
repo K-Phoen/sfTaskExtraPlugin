@@ -8,6 +8,10 @@
         <source>Title</source>
         <target>Titre</target>
       </trans-unit>
+      <trans-unit id="2">
+        <source>Deleted message</source>
+        <target>Message supprimé</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
