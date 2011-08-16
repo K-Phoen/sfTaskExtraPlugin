@@ -40,12 +40,14 @@ $t->messages_ok(
 
     // from the i18n dir (deleted messages)
     'This message does not exist anymore',
+    'Deleted message',
   ),
   '->getCurrentMessages() returns %msg_total% messages.'
 );
 $t->messages_ok(
   $extractor->getOldMessages(),
   array(
+    'Deleted message',
     'Set in "fooComponent" component',
     'This message does not exist anymore',
   ),
