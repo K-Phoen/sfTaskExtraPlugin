@@ -16,4 +16,9 @@ class ProjectConfiguration extends sfProjectConfiguration
     $this->setPluginPath('sfTaskExtraPlugin', dirname(__FILE__).'/../../../..');
     $this->setPluginPath('SpecialPlugin', sfConfig::get('sf_data_dir').'/plugins/SpecialPlugin');
   }
+
+  public function setupPlugins()
+  {
+    $this->enablePluginDevelopment('StandardPlugin');
+  }
 }
