@@ -13,7 +13,7 @@ class ProjectConfiguration extends sfProjectConfiguration
   public function setup()
   {
     $this->setPlugins(array(
-      'sfPropel15Plugin',
+      'sfPropelORMPlugin',
 
       '##PLUGIN_NAME##'
     ));
