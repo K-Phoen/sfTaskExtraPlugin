@@ -1,6 +1,6 @@
 <?php
 
-class sfI18nExtractPluginTask extends sfBaseTask
+class sfI18nExtractPluginTask extends sfTaskExtraBaseTask
 {
   /**
    * @see sfTask
@@ -66,6 +66,8 @@ EOF;
    */
   public function execute($arguments = array(), $options = array())
   {
+    $this->checkPluginExists($arguments['plugin']);
+
     $this->logSection('i18n', sprintf('extracting i18n strings for the "%s" plugin', $arguments['plugin']));
 
     // when not in an "application context", let's create a dummy config
